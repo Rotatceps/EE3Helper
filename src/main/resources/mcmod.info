@@ -1,0 +1,16 @@
+[
+{
+  "modid": "EE3HELP",
+  "name": "EE3 Helper",
+  "description": "Adds a few commands to simplify working with EE3.",
+  "version": "2.1",
+  "mcversion": "1.7.10",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Rotatceps"],
+  "credits": "Forge Folks, EE3 Contributors",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
