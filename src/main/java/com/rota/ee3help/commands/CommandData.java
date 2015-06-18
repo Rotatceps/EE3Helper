@@ -1,7 +1,6 @@
 package com.rota.ee3help.commands;
 
 import com.rota.ee3help.DataTracker;
-import com.rota.ee3help.EE3Help;
 import com.rota.ee3help.Helper;
 
 import net.minecraft.command.ICommandSender;
