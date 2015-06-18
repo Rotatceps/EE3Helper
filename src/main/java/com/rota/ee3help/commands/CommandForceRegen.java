@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.pahimar.ee3.exchange.DynamicEnergyValueInitThread;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
+import com.rota.ee3help.DataTracker;
 import com.rota.ee3help.Helper;
 
 import net.minecraft.command.ICommandSender;
@@ -27,7 +28,7 @@ public class CommandForceRegen extends CommandModifyBase
 	public void processCommand(ICommandSender cs, String[] args)
 	{
 		Helper.toChat(cs, EnumChatFormatting.AQUA + "Clearing saved values & forcing DynamicEMC");
-		File energyValuesDirectory = new File(Helper.EE3_ENERGYVALUES_DIR);
+		File energyValuesDirectory = new File(DataTracker.EE3_ENERGYVALUES_DIR);
 
 		if(energyValuesDirectory.exists() && energyValuesDirectory.isDirectory())
 		{

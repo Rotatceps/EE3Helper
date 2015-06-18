@@ -90,7 +90,7 @@ public class CommandAddItem extends CommandModifyBase
 						if(iStack != null)
 						{
 							addItem(registryNames.getNameForObject(iStack.getItem()),iStack.getItemDamage(),value);
-							Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ITEM");
+							Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ITEM: "+registryNames.getNameForObject(iStack.getItem()));
 						}
 						else
 							Helper.toChatErr(cs, "(X) Invalid item.");

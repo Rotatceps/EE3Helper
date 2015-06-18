@@ -1,27 +1,88 @@
 package com.rota.ee3help;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pahimar.ee3.api.exchange.EnergyValue;
+import com.pahimar.ee3.exchange.WrappedStack;
+import com.pahimar.ee3.reference.Reference;
 import com.pahimar.ee3.util.SerializationHelper;
 
-import net.minecraft.command.ICommandSender;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class DataTracker
 {
-	private static HashMap<File,File> worldData = new HashMap<File,File>();
+	public static final String EE3_ENERGYVALUES_DIR = 
+			FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory() 
+			+ File.separator +"data" + File.separator 
+			+ Reference.LOWERCASE_MOD_ID + File.separator 
+			+ "energyvalues";
+
+	public static final String EE3_ENERGYVALUES_DIR_OFFSET = 
+			"data" + File.separator 
+			+ Reference.LOWERCASE_MOD_ID 
+			+ File.separator + "energyvalues";
 	
+	public static final String EE3H_USERDATA_DIR = "data" + File.separator + "ee3h" + File.separator + "userdata";
+	public static final String MC_SAVES_DIR = "saves";
+	
+	private static HashMap<File,String> worldData = new HashMap<File,String>();
 	private static ArrayList<File> worldDataList = new ArrayList<File>();
 	private static ArrayList<File> userDataList = new ArrayList<File>();
 	
+	public static HashMap<File,String> data = new HashMap<File,String>();
+	public static ArrayList<File> dataList = new ArrayList<File>();
+	
+	public static boolean listAccurate;
+	
 	// Use this - SerializationHelper.readEnergyValueStackMapFromJsonFile
+	// Use this - SerializationHelper.writeEnergyValueStackMapToJsonFile
+	
+	public static void buildList()
+	{
+		dataList.clear();
+		data.clear();
+		
+		buildUserList();
+		buildWorldList();
+		
+		for(File f : worldDataList)
+		{
+			dataList.add(f);
+			data.put(f,"WORLD: "+worldData.get(f));
+		}
+		
+		for(File f : userDataList)
+		{
+			dataList.add(f);
+			data.put(f,"USER: "+f.getName());
+		}
+		
+		listAccurate = true;
+	}
 	
 	public static void buildUserList()
 	{
+		userDataList.clear();
 		
+		File dir = new File(EE3H_USERDATA_DIR);
+		if(!dir.exists())
+			dir.mkdirs();
+		
+		if(dir.isDirectory())
+		{
+			for(File f : dir.listFiles())
+			{
+				if(f.getName().contains(".json"))
+				{
+					userDataList.add(f);
+				}
+			}
+		}
 	}
 	
 	public static void buildWorldList()
@@ -29,7 +90,7 @@ public class DataTracker
 		worldData.clear();
 		worldDataList.clear();
 		
-		File dir = new File(Helper.MC_SAVES_DIR);
+		File dir = new File(MC_SAVES_DIR);
 		if(!dir.exists())
 			dir.mkdir();
 		
@@ -45,11 +106,12 @@ public class DataTracker
 					{
 						if(internal.getName().contains("level.dat"))
 						{
-							worldData.put(f, 
-									new File(Helper.MC_SAVES_DIR + File.separator 
+							worldData.put(new File(MC_SAVES_DIR + File.separator 
 									+ f.getName() + File.separatorChar 
-									+ Helper.EE3_ENERGYVALUES_DIR_OFFSET + File.separator 
-									+ Helper.getEE3File("pre", "values")));
+									+ EE3_ENERGYVALUES_DIR_OFFSET + File.separator 
+									+ Helper.getEE3File("pre", "values"))
+									,f.getName());
+
 							break;
 						}
 					}
@@ -57,22 +119,51 @@ public class DataTracker
 			}
 		}
 		
-		for(Map.Entry<File,File> entry : worldData.entrySet())
+		for(Map.Entry<File,String> entry : worldData.entrySet())
 		{
-			System.out.println(entry.getKey().exists() + ": " + entry.getKey().getAbsolutePath());
-			System.out.println(entry.getValue().exists() + ": " + entry.getValue().getAbsolutePath());
-			if(entry.getValue().exists())
-				worldDataList.add(entry.getValue());
+			if(entry.getKey().exists())
+				worldDataList.add(entry.getKey());
 		}
 	}
 	
-	public static void importData(ICommandSender cs, int index)
+	public static boolean importData(int index)
 	{
+		if(!listAccurate) return false;
+
+		try
+		{
+			dataList.get(index);
+		}
+		catch (ArrayIndexOutOfBoundsException e)
+		{
+			return false;
+		}
+		Map<WrappedStack, EnergyValue> dataMap = SerializationHelper.readEnergyValueStackMapFromJsonFile(dataList.get(index));
+		Helper.savePre(dataMap);
 		
+		listAccurate = false;
+		return true;
 	}
 	
-	public static void exportData(ICommandSender cs, String name)
+	public static void exportData()
 	{
+		File dir = new File(EE3H_USERDATA_DIR);
+		if(!dir.exists())
+			dir.mkdirs();
 		
+		if(dir.isDirectory())
+		{
+			Map<WrappedStack, EnergyValue> dataMap = Helper.loadPre();
+
+			String folderName = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectoryName();
+			File values = new File(dir + File.separator + "EMC-"+folderName.toUpperCase()+".json");
+			
+			if(values.exists())
+				values.delete();
+			
+			SerializationHelper.writeEnergyValueStackMapToJsonFile(values, dataMap);
+		}
+		
+		listAccurate = false;
 	}
 }

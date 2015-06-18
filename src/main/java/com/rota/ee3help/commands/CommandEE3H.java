@@ -51,7 +51,7 @@ public class CommandEE3H extends CommandBase
                 }
             }
         }
-        Helper.toChatErr(cs, "Invalid, or no sub-submmand provided.");
+        Helper.toChatErr(cs, "Invalid, or no sub-command provided.");
         Helper.toChat(cs, EnumChatFormatting.GOLD + "Execute a sub-command with no arguments for instructions");
         Helper.toChat(cs, EnumChatFormatting.AQUA + "add-item: "+EnumChatFormatting.BLUE+"Adds a single item.");
         Helper.toChat(cs, EnumChatFormatting.AQUA + "add-item-range: "+EnumChatFormatting.BLUE+"Adds a range of items by their damage value.");
@@ -61,6 +61,7 @@ public class CommandEE3H extends CommandBase
         Helper.toChat(cs, EnumChatFormatting.AQUA + "regen: "+EnumChatFormatting.BLUE+"Forces EE3 to run Dynamic EMC.");
         Helper.toChat(cs, EnumChatFormatting.AQUA + "list: "+EnumChatFormatting.BLUE+"List all entries in the values file. by page.");
         Helper.toChat(cs, EnumChatFormatting.AQUA + "iditem: "+EnumChatFormatting.BLUE+"Outputs all relevant information about the given item.");
+        Helper.toChat(cs, EnumChatFormatting.AQUA + "data: "+EnumChatFormatting.BLUE+"Import/Export/List available data, use command for more info.");
 	}
 	
 	@Override

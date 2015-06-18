@@ -9,10 +9,8 @@ import java.util.Map;
 import com.pahimar.ee3.api.exchange.EnergyValue;
 import com.pahimar.ee3.exchange.WrappedStack;
 import com.pahimar.ee3.reference.Files;
-import com.pahimar.ee3.reference.Reference;
 import com.pahimar.ee3.util.SerializationHelper;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.command.ICommandSender;
@@ -22,23 +20,13 @@ import net.minecraft.util.RegistryNamespaced;
 
 public class Helper
 {	
-	public static final String EE3_ENERGYVALUES_DIR = 
-			FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory() 
-			+ File.separator +"data" + File.separator + Reference.LOWERCASE_MOD_ID + File.separator + "energyvalues";
-	
-	public static final String EE3_ENERGYVALUES_DIR_OFFSET = 
-			"data" + File.separator + Reference.LOWERCASE_MOD_ID + File.separator + "energyvalues";
-	
-	public static final String MC_SAVES_DIR = "saves";
-
-	
 	public static boolean createPre()
 	{
-		File dir = new File(EE3_ENERGYVALUES_DIR);
+		File dir = new File(DataTracker.EE3_ENERGYVALUES_DIR);
 		if(!dir.exists())
 			dir.mkdirs();
 		
-		File values = new File(EE3_ENERGYVALUES_DIR + File.separator + getEE3File("pre","values"));
+		File values = new File(DataTracker.EE3_ENERGYVALUES_DIR + File.separator + getEE3File("pre","values"));
 		if(!values.exists())
 		{
 			try 

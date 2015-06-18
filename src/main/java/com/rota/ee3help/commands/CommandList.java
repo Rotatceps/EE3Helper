@@ -100,38 +100,44 @@ public class CommandList extends CommandModifyBase
 	@Override
 	public void processCommand(ICommandSender cs, String[] args)
 	{
-		buildList();
-		
-		EE3Help.listAccurate = true;
-		
-		int pageLength = 9;
-		int pages = 0;
-		
-		pages = (int) Math.ceil(entries.size()/(double) pageLength);
-		
-		if(args.length == 0)
+		try
 		{
-			Helper.toChat(cs, EnumChatFormatting.AQUA + "Pages: " + pages + ", list <page>");
-		}
-		
-		else if(args.length >= 1)
-		{
-			if(pages == 0) { Helper.toChat(cs, EnumChatFormatting.GOLD + "No Entries."); return; }
-			int page = Integer.parseInt(args[0]);
+			buildList();	
+			EE3Help.listAccurate = true;
 			
-			page = (page < 1) ? 1 : page;
-			page = (page > pages) ? pages : page;
-		
-			Helper.toChat(cs, EnumChatFormatting.GRAY + "---- Page "+(page)+"/"+pages+" ----");
-			int index = (page * pageLength)-pageLength;
-			for(int i = index; (i < index + pageLength) && (i < entries.size()); i++)
-			{	
-				Helper.toChat(cs, EnumChatFormatting.GOLD
-						+ "(" +String.format("%4s", i)+") "
-						+ getInfo(entries.get(i)) + " "
-						+ EnumChatFormatting.BLUE + "EMC: " 
-						+ EnumChatFormatting.RED + valuesPre.get(entries.get(i)));
+			int pageLength = 9;
+			int pages = 0;
+			
+			pages = (int) Math.ceil(entries.size()/(double) pageLength);
+			
+			if(args.length == 0)
+			{
+				Helper.toChat(cs, EnumChatFormatting.AQUA + "Pages: " + pages + ", list <page>");
 			}
+			
+			else if(args.length >= 1)
+			{
+				if(pages == 0) { Helper.toChat(cs, EnumChatFormatting.GOLD + "No Entries."); return; }
+				int page = Integer.parseInt(args[0]);
+				
+				page = (page < 1) ? 1 : page;
+				page = (page > pages) ? pages : page;
+			
+				Helper.toChat(cs, EnumChatFormatting.GRAY + "---- Page "+(page)+"/"+pages+" ----");
+				int index = (page * pageLength)-pageLength;
+				for(int i = index; (i < index + pageLength) && (i < entries.size()); i++)
+				{	
+					Helper.toChat(cs, EnumChatFormatting.GOLD
+							+ "(" +String.format("%4s", i)+") "
+							+ getInfo(entries.get(i)) + " "
+							+ EnumChatFormatting.BLUE + "EMC: " 
+							+ EnumChatFormatting.RED + valuesPre.get(entries.get(i)));
+				}
+			}
+		}
+		catch (NumberFormatException e)
+		{
+			Helper.toChatErr(cs, "Non-number in numeric field.");
 		}
 	}
 }
