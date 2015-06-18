@@ -4,14 +4,13 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
 # gradle
 /.gradle
 /build
-/gradle
+
 
 # eclipse
 /eclipse
