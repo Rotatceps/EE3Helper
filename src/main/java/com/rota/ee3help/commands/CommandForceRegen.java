@@ -23,8 +23,7 @@ public class CommandForceRegen extends CommandModifyBase
 	{
 		return "regen";
 	}
-
-	@Override
+	
 	public void processCommand(ICommandSender cs, String[] args)
 	{
 		Helper.toChat(cs, EnumChatFormatting.AQUA + "Clearing saved values & forcing DynamicEMC");

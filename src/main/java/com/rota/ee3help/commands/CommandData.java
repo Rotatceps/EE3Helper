@@ -88,6 +88,7 @@ public class CommandData extends CommandModifyBase
 						{
 							DataTracker.importData(Integer.parseInt(args[1]));
 							Helper.toChat(cs, EnumChatFormatting.GREEN + "(!) Imported Data");
+							new CommandForceRegen().processCommand(cs, new String[] {});
 						}
 						else
 							Helper.toChatErr(cs, "Indices may be innacurate, run 'data list' first. ");

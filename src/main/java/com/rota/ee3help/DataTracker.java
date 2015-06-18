@@ -76,7 +76,7 @@ public class DataTracker
 		{
 			for(File f : dir.listFiles())
 			{
-				if(f.getName().contains(".json"))
+				if(f.getName().toLowerCase().endsWith(".json"))
 				{
 					userDataList.add(f);
 				}
