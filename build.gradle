@@ -23,8 +23,13 @@ archivesBaseName = "EE3Help"
 
 minecraft 
 {
-    version = "1.7.10-10.13.3.1408-1.7.10"
+    version = "1.7.10-10.13.4.1456-1.7.10"
     runDir = "eclipse"
+}
+
+dependencies 
+{
+	compile files('lib/EquivalentExchange3-1.7.10-0.3.0-dev.jar')
 }
 
 processResources
@@ -52,14 +57,3 @@ configurations
     external
     compile.extendsFrom external
 }
-
-dependencies 
-{
-	compile files('lib/EquivalentExchange3-1.7.10-0.3.0-dev.jar')
-	//external'com.googlecode.json-simple:json-simple:1.1.1'
-}
-
-//jar 
-//{
-//    from { configurations.external.collect { it.isDirectory() ? it : zipTree(it) } }
-//}
