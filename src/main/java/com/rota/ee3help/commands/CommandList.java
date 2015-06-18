@@ -1,4 +1,4 @@
-package com.rota.ee3help;
+package com.rota.ee3help.commands;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -8,6 +8,9 @@ import java.util.Map;
 import com.pahimar.ee3.api.exchange.EnergyValue;
 import com.pahimar.ee3.exchange.OreStack;
 import com.pahimar.ee3.exchange.WrappedStack;
+import com.rota.ee3help.EE3Help;
+import com.rota.ee3help.Helper;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.command.ICommandSender;

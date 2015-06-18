@@ -1,4 +1,6 @@
-package com.rota.ee3help;
+package com.rota.ee3help.commands;
+
+import com.rota.ee3help.DataTracker;
 
 import net.minecraft.command.ICommandSender;
 
@@ -23,5 +25,7 @@ public class CommandData extends CommandModifyBase
 		// data import x
 		// data export name
 		// data export, creates random name.
+		
+		DataTracker.buildWorldList();
 	}
 }

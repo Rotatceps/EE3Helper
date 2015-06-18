@@ -1,12 +1,14 @@
-package com.rota.ee3help;
+package com.rota.ee3help.commands;
 
 import java.util.Map;
 
 import com.pahimar.ee3.api.exchange.EnergyValue;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
-import com.pahimar.ee3.exchange.OreStack;
 import com.pahimar.ee3.exchange.WrappedStack;
+import com.rota.ee3help.EE3Help;
+import com.rota.ee3help.Helper;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,53 +16,46 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.RegistryNamespaced;
-import net.minecraftforge.oredict.OreDictionary;
 
-public class CommandAddOreRange extends CommandModifyBase
+public class CommandAddItem extends CommandModifyBase
 {
 	EnergyValueRegistry registryValues = EnergyValueRegistry.getInstance();
-	static RegistryNamespaced registryNames = GameData.getItemRegistry();
+	RegistryNamespaced registryNames = GameData.getItemRegistry();
 	
-	public static void addOreRangeForRange(String name, int start, int end, float value)
-	{
-		for(int i = start; i <= end; i++)
-		{
-			addOreRange(name,i,value);
-		}
-	}
-	
-	public static void addOreRange(String name, int damageValue, float value)
+	private void addItem(String name, int damageValue, float value)
 	{
 		if(!registryNames.containsKey(name))
 			return;
+		
 		ItemStack iStack = new ItemStack((Item) registryNames.getObject(name));
         Map<WrappedStack, EnergyValue> valuesPre = Helper.loadPre();
+        
 		iStack.setItemDamage(damageValue);
-		int oreIDs [] = OreDictionary.getOreIDs(iStack);
-		if(oreIDs.length == 0) return;
 		
-		for(int i : oreIDs)
-		{
-			WrappedStack w = WrappedStack.wrap(new OreStack(OreDictionary.getOreName(i)));
-			EnergyValue e = new EnergyValue(value);
-			
-	        if (w != null && e != null && Float.compare(e.getValue(), 0) > 0)
-	        {
-	        	if(valuesPre.containsKey(w))
-	        		valuesPre.replace(w, e);
-	        	else
-	                valuesPre.put(w, e);
-	        }
-		}
+		WrappedStack w = WrappedStack.wrap(iStack);
+		EnergyValue e = new EnergyValue(value);
 		
+        if (w != null && e != null && Float.compare(e.getValue(), 0) > 0)
+        {
+        	if(valuesPre.containsKey(w))
+        		valuesPre.replace(w, e);
+        	else
+                valuesPre.put(w, e);
+        }
+
         EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
         Helper.savePre(valuesPre);
+        
+        if(EE3Help.config.auto_oredict)
+        {
+        	CommandAddOreRange.addOreRange(name, damageValue, value);
+        }
 	}
 	
 	@Override
 	public String getCommandName()
 	{
-		return "add-ore-range";
+		return "add-item";
 	}
 
 	@Override
@@ -76,66 +71,63 @@ public class CommandAddOreRange extends CommandModifyBase
 		try
 		{
 			String name;
-			int dmg;
+			int start, end;
 			float value;
 			
 			switch(args.length)
 			{
 				case 0:
-					Helper.toChatErr(cs, "add-ore-range <emcvalue>, Uses held item");
-					Helper.toChatErr(cs, "add-ore-range <id/name> <emcvalue> (DMG=0|N/A)");
-					Helper.toChatErr(cs, "add-ore-range <id/name> <damagevalue> <emcvalue>");
+					Helper.toChatErr(cs, "add-item <emcvalue>, Uses held item.");
+					Helper.toChatErr(cs, "add-item <itemID/name> <emcvalue> (DMG=0|N/A)");
+					Helper.toChatErr(cs, "add-item <itemID/name> <damagevalue> <emcvalue>");
 					break;
 				case 1:
 					if(cs instanceof EntityPlayer)
 					{
 						EntityPlayer player = (EntityPlayer) cs;
 						ItemStack iStack = player.getHeldItem();
-
+						value = Float.parseFloat(args[0]);
 						if(iStack != null)
 						{
-							name = registryNames.getNameForObject(iStack.getItem());
-							value = Float.parseFloat(args[0]);
-							dmg = iStack.getItemDamage();
-							
-							addOreRange(name,dmg,value);
-							Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ORE RANGE FOR: "+name);
+							addItem(registryNames.getNameForObject(iStack.getItem()),iStack.getItemDamage(),value);
+							Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ITEM");
 						}
 						else
 							Helper.toChatErr(cs, "(X) Invalid item.");
 					}
+					else
+						FMLLog.getLogger().error("EE3H Command sender not instance of player, can't check held item.");
 					break;
 				case 2:
 					name = Helper.getItemName(args[0]);
 					value = Float.parseFloat(args[1]);
-					dmg = 0;
 					
 					if(name != null)
 					{
-						addOreRange(name,dmg,value);
-						Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ORE RANGE FOR: "+name);
+						addItem(name,0,value);
+						Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ITEM: "+name);
 					}
 					else
 						Helper.toChatErr(cs, "(X) Invalid item.");
 					break;
 				case 3:
 					name = Helper.getItemName(args[0]);
-					dmg = Integer.parseInt(args[1]);
+					start = end = Integer.parseInt(args[1]);
 					value = Float.parseFloat(args[2]);
 					
 					if(name != null)
 					{
-						addOreRange(name,dmg,value);
-						Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ORE RANGE FOR: "+name);
+						addItem(name,0,value);
+						Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ITEM: "+name);
 					}
 					else
-						Helper.toChatErr(cs, "(X) Invalid item.");
+						Helper.toChatErr(cs, "(X) No such item.");
 					break;
 				default:
 					Helper.toChatErr(cs, "Invalid number of arguments for operation.");
-					Helper.toChatErr(cs, "add-ore-range <emcvalue>, Uses held item");
-					Helper.toChatErr(cs, "add-ore-range <id/name> <emcvalue> (DMG=0|N/A)");
-					Helper.toChatErr(cs, "add-ore-range <id/name> <damagevalue> <emcvalue>");
+					Helper.toChatErr(cs, "add-item <emcvalue>, Uses held item.");
+					Helper.toChatErr(cs, "add-item <itemID/name> <emcvalue> (DMG=0|N/A)");
+					Helper.toChatErr(cs, "add-item <itemID/name> <damagevalue> <emcvalue>");
 			}
 		}
 		catch (NumberFormatException e)

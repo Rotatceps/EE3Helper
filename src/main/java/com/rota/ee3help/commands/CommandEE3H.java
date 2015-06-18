@@ -1,8 +1,10 @@
-package com.rota.ee3help;
+package com.rota.ee3help.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.rota.ee3help.Helper;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -93,6 +95,7 @@ public class CommandEE3H extends CommandBase
 	    	subCommands.add(new CommandList());
 	    	subCommands.add(new CommandForceRegen());
 	    	subCommands.add(new CommandIDItem());
+	    	subCommands.add(new CommandData());
 
 	        for (CommandBase commandBase : subCommands)
 	        {

@@ -1,4 +1,6 @@
-package com.rota.ee3help;
+package com.rota.ee3help.commands;
+
+import com.rota.ee3help.EE3Help;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;

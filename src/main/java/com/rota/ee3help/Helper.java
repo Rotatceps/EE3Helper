@@ -26,6 +26,12 @@ public class Helper
 			FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory() 
 			+ File.separator +"data" + File.separator + Reference.LOWERCASE_MOD_ID + File.separator + "energyvalues";
 	
+	public static final String EE3_ENERGYVALUES_DIR_OFFSET = 
+			"data" + File.separator + Reference.LOWERCASE_MOD_ID + File.separator + "energyvalues";
+	
+	public static final String MC_SAVES_DIR = "saves";
+
+	
 	public static boolean createPre()
 	{
 		File dir = new File(EE3_ENERGYVALUES_DIR);

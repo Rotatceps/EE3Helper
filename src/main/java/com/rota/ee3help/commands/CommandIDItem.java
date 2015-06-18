@@ -1,4 +1,6 @@
-package com.rota.ee3help;
+package com.rota.ee3help.commands;
+
+import com.rota.ee3help.Helper;
 
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.command.CommandBase;

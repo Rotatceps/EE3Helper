@@ -1,8 +1,11 @@
-package com.rota.ee3help;
+package com.rota.ee3help.commands;
 
 import java.io.File;
+
 import com.pahimar.ee3.exchange.DynamicEnergyValueInitThread;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
+import com.rota.ee3help.Helper;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
 

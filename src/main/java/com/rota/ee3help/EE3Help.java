@@ -1,5 +1,7 @@
 package com.rota.ee3help;
 
+import com.rota.ee3help.commands.CommandEE3H;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -13,8 +15,8 @@ public class EE3Help
 	public static final String MOD_ID = "EE3HELP";
 	public static final String VERSION = "2.1";
 	
-	protected static boolean listAccurate = false;
-	protected static Configuration config;
+	public static boolean listAccurate = false;
+	public static Configuration config;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
