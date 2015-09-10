@@ -62,6 +62,7 @@ public class CommandEE3H extends CommandBase
         Helper.toChat(cs, EnumChatFormatting.AQUA + "list: "+EnumChatFormatting.BLUE+"List all entries in the values file. by page.");
         Helper.toChat(cs, EnumChatFormatting.AQUA + "iditem: "+EnumChatFormatting.BLUE+"Outputs all relevant information about the given item.");
         Helper.toChat(cs, EnumChatFormatting.AQUA + "data: "+EnumChatFormatting.BLUE+"Import/Export/List available data, use command for more info.");
+        Helper.toChat(cs, EnumChatFormatting.AQUA + "add-fluid: "+EnumChatFormatting.BLUE+"Adds the given fluid name if it exists.");
 	}
 	
 	@Override
@@ -97,6 +98,7 @@ public class CommandEE3H extends CommandBase
 	    	subCommands.add(new CommandForceRegen());
 	    	subCommands.add(new CommandIDItem());
 	    	subCommands.add(new CommandData());
+	    	subCommands.add(new CommandAddFluid());
 
 	        for (CommandBase commandBase : subCommands)
 	        {

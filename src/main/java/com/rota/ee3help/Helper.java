@@ -68,7 +68,7 @@ public class Helper
 	
 	public static String getEE3File(String fieldStart, String fieldEnd)
 	{
-		// Because PRE_ASSIGNED_ENERGY_VALUES was changed to PRE_CALCULATED_ENERGY_VALUES
+		// Because PRE_ASSIGNED_ENERGY_VALUES was changed to PRE_CALCULATION_ENERGY_VALUES
 		// So this should work for versions before and after that change.
 		
 		try
