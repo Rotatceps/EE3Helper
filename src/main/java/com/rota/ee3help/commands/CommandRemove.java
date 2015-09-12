@@ -1,5 +1,6 @@
 package com.rota.ee3help.commands;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import com.pahimar.ee3.api.exchange.EnergyValue;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
 import com.pahimar.ee3.exchange.WrappedStack;
+import com.pahimar.ee3.reference.Files;
 import com.rota.ee3help.EE3Help;
 import com.rota.ee3help.Helper;
 
@@ -38,6 +40,8 @@ public class CommandRemove extends CommandModifyBase
 		
         EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
         Helper.savePre(valuesPre);
+        
+		File staticValues = new File(Files.STATIC_ENERGY_VALUES_JSON);
 	}
 	
 	private void remove(int i, int j)

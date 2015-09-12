@@ -63,6 +63,7 @@ public class CommandEE3H extends CommandBase
         Helper.toChat(cs, EnumChatFormatting.AQUA + "iditem: "+EnumChatFormatting.BLUE+"Outputs all relevant information about the given item.");
         Helper.toChat(cs, EnumChatFormatting.AQUA + "data: "+EnumChatFormatting.BLUE+"Import/Export/List available data, use command for more info.");
         Helper.toChat(cs, EnumChatFormatting.AQUA + "add-fluid: "+EnumChatFormatting.BLUE+"Adds the given fluid name if it exists.");
+        Helper.toChat(cs, EnumChatFormatting.AQUA + "sync: "+EnumChatFormatting.BLUE+"Forces a sync for oneself or all players (op command).");
 	}
 	
 	@Override
@@ -99,6 +100,7 @@ public class CommandEE3H extends CommandBase
 	    	subCommands.add(new CommandIDItem());
 	    	subCommands.add(new CommandData());
 	    	subCommands.add(new CommandAddFluid());
+	    	subCommands.add(new CommandSync());
 
 	        for (CommandBase commandBase : subCommands)
 	        {

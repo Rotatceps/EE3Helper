@@ -5,6 +5,8 @@ import java.util.Map;
 import com.pahimar.ee3.api.exchange.EnergyValue;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
 import com.pahimar.ee3.exchange.WrappedStack;
+import com.pahimar.ee3.network.PacketHandler;
+import com.pahimar.ee3.network.message.MessageSetEnergyValue;
 import com.rota.ee3help.EE3Help;
 import com.rota.ee3help.Helper;
 
@@ -41,6 +43,8 @@ public class CommandAddItem extends CommandModifyBase
         		valuesPre.replace(w, e);
         	else
                 valuesPre.put(w, e);
+        	
+        	PacketHandler.INSTANCE.sendToAll(new MessageSetEnergyValue(w, e));
         }
 
         EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);

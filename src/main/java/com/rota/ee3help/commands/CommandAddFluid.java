@@ -4,18 +4,16 @@ import java.util.Map;
 
 import com.pahimar.ee3.api.exchange.EnergyValue;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
-import com.pahimar.ee3.exchange.OreStack;
 import com.pahimar.ee3.exchange.WrappedStack;
+import com.pahimar.ee3.network.PacketHandler;
+import com.pahimar.ee3.network.message.MessageSetEnergyValue;
 import com.rota.ee3help.Helper;
 
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.RegistryNamespaced;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class CommandAddFluid extends CommandModifyBase
 {
@@ -35,6 +33,8 @@ public class CommandAddFluid extends CommandModifyBase
         		valuesPre.replace(w, e);
         	else
                 valuesPre.put(w, e);
+        	
+        	PacketHandler.INSTANCE.sendToAll(new MessageSetEnergyValue(w, e));
         }
 		
         EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);

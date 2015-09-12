@@ -6,6 +6,8 @@ import com.pahimar.ee3.api.exchange.EnergyValue;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
 import com.pahimar.ee3.exchange.OreStack;
 import com.pahimar.ee3.exchange.WrappedStack;
+import com.pahimar.ee3.network.PacketHandler;
+import com.pahimar.ee3.network.message.MessageSetEnergyValue;
 import com.rota.ee3help.Helper;
 
 import cpw.mods.fml.common.registry.GameData;
@@ -51,6 +53,8 @@ public class CommandAddOreRange extends CommandModifyBase
 	        		valuesPre.replace(w, e);
 	        	else
 	                valuesPre.put(w, e);
+	        	
+	        	PacketHandler.INSTANCE.sendToAll(new MessageSetEnergyValue(w, e));
 	        }
 		}
 		

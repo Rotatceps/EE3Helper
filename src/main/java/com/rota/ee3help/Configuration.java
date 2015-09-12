@@ -19,7 +19,10 @@ public class Configuration
 	File config = new File(CONFIG_DIR + File.separator + CONFIG_NAME);
 	
 	public static final String DESCRIPTION_AUTO_OREDICT = "Automatically add all Ore Dictionary entries for added items.";
+	public static final String DESCRIPTION_ALLOW_NONOPSYNC = "Allow non-op players to request a sync.";
 	public boolean auto_oredict;
+	public boolean allow_nonopsync;
+	
 	
 	public Configuration()
 	{
@@ -38,6 +41,7 @@ public class Configuration
 	public void setDefault()
 	{
 		auto_oredict = true;
+		allow_nonopsync = true;
 	}
 	
 	public void writeConfig()
@@ -48,6 +52,8 @@ public class Configuration
 			
 			pw.println("# " + DESCRIPTION_AUTO_OREDICT);
 			pw.print("auto_oredict = " + auto_oredict);
+			pw.print("# " + DESCRIPTION_ALLOW_NONOPSYNC);
+			pw.print("auto_oredict = " + allow_nonopsync);
 			
 			pw.close();
 		}
