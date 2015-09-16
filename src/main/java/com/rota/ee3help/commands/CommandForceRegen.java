@@ -28,25 +28,20 @@ public class CommandForceRegen extends CommandModifyBase
 	@Override
 	public void processCommand(ICommandSender cs, String[] args)
 	{
-		/* Delete the static energy values file.
-		 * Simulate a server restart.
-		 */
-		
 		File staticValues = new File(Files.STATIC_ENERGY_VALUES_JSON);
 		
 		if(staticValues.exists())
 			staticValues.delete();
-		
-		EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
-		EnergyValueRegistry.getInstance().save();
 		
 		WorldEventHandler.hasInitilialized = false;
 		
         DynamicEnergyValueInitThread d = new DynamicEnergyValueInitThread();
         Thread t = new Thread(d, "EE3H_DYNEMCTHREAD");
        
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "Waiting for Dynamic EMC.");
+        if(!CommandRemove.nogenRemoval) 
+        	Helper.toChat(cs, EnumChatFormatting.AQUA + "Waiting for Dynamic EMC.");
         t.start();        
+        long start = System.currentTimeMillis();
         try
         {
         	while(t.isAlive())
@@ -55,8 +50,12 @@ public class CommandForceRegen extends CommandModifyBase
         	}
         }
         catch(InterruptedException e) {}
-        Helper.toChat(cs, EnumChatFormatting.GREEN + "Dynamic EMC complete.");
+        if(!CommandRemove.nogenRemoval) 
+        	Helper.toChat(cs, EnumChatFormatting.GREEN + "Dynamic EMC complete: " + (System.currentTimeMillis() - start - 100)/1000 + "s");
         
-        WorldEventHandler.hasInitilialized = true;
+        WorldEventHandler.hasInitilialized = true;	
+        
+		EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
+		EnergyValueRegistry.getInstance().save();
 	}
 }

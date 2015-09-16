@@ -1,6 +1,5 @@
 package com.rota.ee3help.commands;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map;
 import com.pahimar.ee3.api.exchange.EnergyValue;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
 import com.pahimar.ee3.exchange.WrappedStack;
-import com.pahimar.ee3.reference.Files;
 import com.rota.ee3help.EE3Help;
 import com.rota.ee3help.Helper;
 
@@ -17,6 +15,9 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class CommandRemove extends CommandModifyBase
 {
+	
+	public static boolean nogenRemoval = false;
+	
 	public ArrayList<WrappedStack> entries = new ArrayList<WrappedStack>();
 	Map<WrappedStack, EnergyValue> valuesPre;
 	
@@ -31,9 +32,9 @@ public class CommandRemove extends CommandModifyBase
         Collections.sort(entries);
 	}
 	
-	private void remove(int i)
+	private boolean remove(int i)
 	{
-		if(i < 0 || i >= entries.size()) return;
+		if(i < 0 || i >= entries.size()) return false;
 		
 		valuesPre.remove(entries.get(i));
 		entries.remove(i);
@@ -41,12 +42,13 @@ public class CommandRemove extends CommandModifyBase
         EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
         Helper.savePre(valuesPre);
         
-		File staticValues = new File(Files.STATIC_ENERGY_VALUES_JSON);
+		nogenRemoval = true;
+		return true;
 	}
 	
-	private void remove(int i, int j)
+	private boolean remove(int i, int j)
 	{
-		if(i < 0 || i >= entries.size() || j < 0 || j >= entries.size() || j < i) return;
+		if(i < 0 || i >= entries.size() || j < 0 || j >= entries.size() || j < i) return false;
 		
 		// subList is exclusive for the second parameter, so we take "j+1".
 		
@@ -58,6 +60,9 @@ public class CommandRemove extends CommandModifyBase
 		
         EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
         Helper.savePre(valuesPre);
+        
+        nogenRemoval = true;
+        return true;
 	}
 	
 	@Override
@@ -90,12 +95,14 @@ public class CommandRemove extends CommandModifyBase
 					Helper.toChatErr(cs, "remove <start> <end>");
 					break;
 				case 1:
-					remove(Integer.parseInt(args[0]));
-					Helper.toChat(cs, EnumChatFormatting.LIGHT_PURPLE + "(-) REMOVE");
+					if(remove(Integer.parseInt(args[0])))
+						Helper.toChat(cs, EnumChatFormatting.LIGHT_PURPLE + "(-) REMOVE " + args[0]);
+					else Helper.toChatErr(cs, "Remove Failed: Invalid Index "+args[0]);
 					break;
 				case 2:
-					remove(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
-					Helper.toChat(cs, EnumChatFormatting.LIGHT_PURPLE + "(-) REMOVE RANGE");
+					if(remove(Integer.parseInt(args[0]),Integer.parseInt(args[1])))
+						Helper.toChat(cs, EnumChatFormatting.LIGHT_PURPLE +"(-) REMOVE RANGE "+args[0] +"-"+args[1]);
+					else Helper.toChatErr(cs, "Remove Failed: Invalid Indices "+args[0]+"-"+args[1]);
 					break;
 				default:
 					Helper.toChatErr(cs, "Invalid number of arguments for operation.");

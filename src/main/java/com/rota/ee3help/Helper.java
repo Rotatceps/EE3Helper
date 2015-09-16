@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import com.pahimar.ee3.api.exchange.EnergyValue;
+import com.pahimar.ee3.exchange.EnergyValueRegistry;
 import com.pahimar.ee3.exchange.WrappedStack;
 import com.pahimar.ee3.reference.Files;
 import com.pahimar.ee3.util.SerializationHelper;
@@ -20,6 +21,20 @@ import net.minecraft.util.RegistryNamespaced;
 
 public class Helper
 {	
+	public boolean checkEMC(WrappedStack w)
+	{
+		if(EnergyValueRegistry.getInstance().getEnergyValue(w) == null)
+			return false;
+		return true;
+	}
+	
+	public static long limitMinimum(long in)
+	{
+		if(in < 0)
+			return 0;
+		return in;
+	}
+	
 	public static boolean createPre()
 	{
 		File dir = new File(DataTracker.EE3_ENERGYVALUES_DIR);

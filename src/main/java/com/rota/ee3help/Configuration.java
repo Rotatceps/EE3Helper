@@ -50,10 +50,14 @@ public class Configuration
 		{
 			PrintWriter pw = new PrintWriter(config);
 			
+			pw.println("# If you don't see all of the options, delete this file and they should regenerate.");
+			pw.println("# If you must make comments in this file, ensure the that line begins with a '#'\n");
+			
 			pw.println("# " + DESCRIPTION_AUTO_OREDICT);
-			pw.print("auto_oredict = " + auto_oredict);
-			pw.print("# " + DESCRIPTION_ALLOW_NONOPSYNC);
-			pw.print("auto_oredict = " + allow_nonopsync);
+			pw.print("auto_oredict = " + auto_oredict + "\n");
+			
+			pw.println("# " + DESCRIPTION_ALLOW_NONOPSYNC);
+			pw.print("auto_oredict = " + allow_nonopsync + "\n");
 			
 			pw.close();
 		}
