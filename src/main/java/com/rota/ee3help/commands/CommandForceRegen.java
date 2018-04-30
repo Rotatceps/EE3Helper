@@ -35,17 +35,14 @@ public class CommandForceRegen extends CommandModifyBase
 	@Override
 	public void processCommand(ICommandSender cs, String[] args)
 	{
-        DecimalFormat df = new DecimalFormat("#0.00"); 
-		
+		DecimalFormat df = new DecimalFormat("#0.00"); 
+
 		long startTime = System.currentTimeMillis();
-    	Helper.toChatErr(cs, EnumChatFormatting.AQUA + "Forcing EE3 to recomputing EMC values.");
-    	
+		Helper.toChatErr(cs, EnumChatFormatting.AQUA + "Forcing EE3 to recomputing EMC values.");
+
 		// EE3 stuff
-    	
-    	WorldEventHandler.hasInitilialized = false;
-		
-    	EnergyValueRegistry.INSTANCE.setShouldSave(true);
-    	
+		WorldEventHandler.hasInitilialized = false;
+		EnergyValueRegistry.INSTANCE.setShouldSave(true);
 		try 
 		{
 			Field field = EnergyValueRegistry.class.getDeclaredField("valuesNeedRegeneration");
@@ -55,14 +52,12 @@ public class CommandForceRegen extends CommandModifyBase
 		catch (Exception e) 
 		{
 			throw new RuntimeException("The current version of EE3 Helper is not compatible with the installed version of EE3, please uninstall EE3 Helper.",e);
-		} 
-		
+		} 	
 		EnergyValueRegistry.INSTANCE.save();
 		EnergyValueRegistry.INSTANCE.compute();
-        PacketHandler.INSTANCE.sendToAll(new MessageSyncEnergyValues());
-        
-        WorldEventHandler.hasInitilialized = true;
-        
-        Helper.toChatErr(cs, EnumChatFormatting.GREEN + "EMC recompute completed, duration: " + df.format((((double)(System.currentTimeMillis() - startTime))/1000.0)) + "sec.");
+		PacketHandler.INSTANCE.sendToAll(new MessageSyncEnergyValues());
+		WorldEventHandler.hasInitilialized = true;
+
+		Helper.toChatErr(cs, EnumChatFormatting.GREEN + "EMC recompute completed, duration: " + df.format((((double)(System.currentTimeMillis() - startTime))/1000.0)) + "sec.");
 	}
 }
