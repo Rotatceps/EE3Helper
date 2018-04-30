@@ -1,13 +1,11 @@
 package com.rota.ee3help.commands;
 
-import java.util.Map;
-
 import com.pahimar.ee3.api.exchange.EnergyValue;
+import com.pahimar.ee3.api.exchange.EnergyValueRegistryProxy;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
 import com.pahimar.ee3.exchange.OreStack;
 import com.pahimar.ee3.exchange.WrappedStack;
-import com.pahimar.ee3.network.PacketHandler;
-import com.pahimar.ee3.network.message.MessageSetEnergyValue;
+
 import com.rota.ee3help.Helper;
 
 import cpw.mods.fml.common.registry.GameData;
@@ -21,8 +19,16 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class CommandAddOreRange extends CommandModifyBase
 {
-	EnergyValueRegistry registryValues = EnergyValueRegistry.getInstance();
+	static EnergyValueRegistry registryValues = EnergyValueRegistry.INSTANCE;
 	static RegistryNamespaced registryNames = GameData.getItemRegistry();
+	
+	public CommandAddOreRange()
+	{
+		name = "AddOreRange";
+		usage.add("AddOreRange <emcvalue>, Uses held item");
+		usage.add("AddOreRange <id/name> <emcvalue> (DMG=0|N/A)");
+		usage.add("AddOreRange <id/name> <damagevalue> <emcvalue>");
+	}
 	
 	public static void addOreRangeForRange(String name, int start, int end, float value)
 	{
@@ -36,8 +42,8 @@ public class CommandAddOreRange extends CommandModifyBase
 	{
 		if(!registryNames.containsKey(name))
 			return;
+		
 		ItemStack iStack = new ItemStack((Item) registryNames.getObject(name));
-        Map<WrappedStack, EnergyValue> valuesPre = Helper.loadPre();
 		iStack.setItemDamage(damageValue);
 		int oreIDs [] = OreDictionary.getOreIDs(iStack);
 		if(oreIDs.length == 0) return;
@@ -49,35 +55,15 @@ public class CommandAddOreRange extends CommandModifyBase
 			
 	        if (w != null && e != null && Float.compare(e.getValue(), 0) > 0)
 	        {
-	        	if(valuesPre.containsKey(w))
-	        		valuesPre.replace(w, e);
-	        	else
-	                valuesPre.put(w, e);
-	        	
-	        	PacketHandler.INSTANCE.sendToAll(new MessageSetEnergyValue(w, e));
+	        	EnergyValueRegistryProxy.setEnergyValue(w, e, EnergyValueRegistryProxy.Phase.PRE_CALCULATION);
+	    		EnergyValueRegistry.INSTANCE.save();
 	        }
 		}
-		
-        EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
-        Helper.savePre(valuesPre);
-	}
-	
-	@Override
-	public String getCommandName()
-	{
-		return "add-ore-range";
-	}
-
-	@Override
-	public String getCommandUsage(ICommandSender cs)
-	{
-		return "Use command with no arguments.";
 	}
 
 	@Override
 	public void processCommand(ICommandSender cs, String[] args)
 	{
-		resetFlag();
 		try
 		{
 			String name;
@@ -87,9 +73,7 @@ public class CommandAddOreRange extends CommandModifyBase
 			switch(args.length)
 			{
 				case 0:
-					Helper.toChatErr(cs, "add-ore-range <emcvalue>, Uses held item");
-					Helper.toChatErr(cs, "add-ore-range <id/name> <emcvalue> (DMG=0|N/A)");
-					Helper.toChatErr(cs, "add-ore-range <id/name> <damagevalue> <emcvalue>");
+					Helper.toChatErr(cs,getUsageString());
 					break;
 				case 1:
 					if(cs instanceof EntityPlayer)
@@ -138,9 +122,7 @@ public class CommandAddOreRange extends CommandModifyBase
 					break;
 				default:
 					Helper.toChatErr(cs, "Invalid number of arguments for operation.");
-					Helper.toChatErr(cs, "add-ore-range <emcvalue>, Uses held item");
-					Helper.toChatErr(cs, "add-ore-range <id/name> <emcvalue> (DMG=0|N/A)");
-					Helper.toChatErr(cs, "add-ore-range <id/name> <damagevalue> <emcvalue>");
+					Helper.toChatErr(cs,getUsageString());
 			}
 		}
 		catch (NumberFormatException e)

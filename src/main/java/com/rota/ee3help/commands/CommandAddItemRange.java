@@ -1,12 +1,9 @@
 package com.rota.ee3help.commands;
 
-import java.util.Map;
-
 import com.pahimar.ee3.api.exchange.EnergyValue;
+import com.pahimar.ee3.api.exchange.EnergyValueRegistryProxy;
 import com.pahimar.ee3.exchange.EnergyValueRegistry;
 import com.pahimar.ee3.exchange.WrappedStack;
-import com.pahimar.ee3.network.PacketHandler;
-import com.pahimar.ee3.network.message.MessageSetEnergyValue;
 import com.rota.ee3help.EE3Help;
 import com.rota.ee3help.Helper;
 
@@ -19,9 +16,15 @@ import net.minecraft.util.RegistryNamespaced;
 
 public class CommandAddItemRange extends CommandModifyBase
 {
-	EnergyValueRegistry registryValues = EnergyValueRegistry.getInstance();
+	EnergyValueRegistry registryValues = EnergyValueRegistry.INSTANCE;
 	RegistryNamespaced registryNames = GameData.getItemRegistry();
 
+	public CommandAddItemRange()
+	{
+		name = "AddItemRange";
+		usage.add("AddItemRange <itemID/name> <dmgstart> <dmgend> <emcvalue>");
+	}
+	
 	private void addItemRange(String name, int start, int end, float value)
 	{
 		if(!registryNames.containsKey(name))
@@ -29,7 +32,6 @@ public class CommandAddItemRange extends CommandModifyBase
 		
 		ItemStack iStack = new ItemStack((Item) registryNames.getObject(name));
 		
-        Map<WrappedStack, EnergyValue> valuesPre = Helper.loadPre();
 		for(int i = start; i <= end; i++)
 		{
 			iStack.setItemDamage(i);
@@ -39,43 +41,22 @@ public class CommandAddItemRange extends CommandModifyBase
 			
 	        if (w != null && e != null && Float.compare(e.getValue(), 0) > 0)
 	        {
-	        	if(valuesPre.containsKey(w))
-	        		valuesPre.replace(w, e);
-	        	else
-	                valuesPre.put(w, e);
-	        	
-	        	PacketHandler.INSTANCE.sendToAll(new MessageSetEnergyValue(w, e));
+	        	EnergyValueRegistryProxy.setEnergyValue(w, e, EnergyValueRegistryProxy.Phase.PRE_CALCULATION);
+	    		EnergyValueRegistry.INSTANCE.save();
 	        }
 		}
-        EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
-        Helper.savePre(valuesPre);
-        
         if(EE3Help.config.auto_oredict)
         {
         	CommandAddOreRange.addOreRangeForRange(name, start, end, value);
         }
 	}
-	
-	@Override
-	public String getCommandName()
-	{
-		return "add-item-range";
-	}
-
-	@Override
-	public String getCommandUsage(ICommandSender cs)
-	{
-		return "add-item-range <itemID/name> <dmgstart> <dmgend> <emcvalue>";
-	}
 
 	@Override
 	public void processCommand(ICommandSender cs, String[] args)
 	{
-		resetFlag();
 		try
 		{
 			String name;
-			int start, end;
 			float value;
 			
 			switch(args.length)
@@ -84,6 +65,7 @@ public class CommandAddItemRange extends CommandModifyBase
 					Helper.toChatErr(cs, getCommandUsage(cs));
 					break;
 				case 4:
+					int start, end;
 					name = Helper.getItemName(args[0]);
 					start = Integer.parseInt(args[1]);
 					end = Integer.parseInt(args[2]);
@@ -92,7 +74,7 @@ public class CommandAddItemRange extends CommandModifyBase
 					if(name != null)
 					{
 						addItemRange(name,start,end,value);
-						Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ITEM RANGE: "+name);
+						Helper.toChat(cs, EnumChatFormatting.GREEN + "(+) ITEM RANGE: "+name +" DMG: " + start + "-" + end);
 					}
 					else
 						Helper.toChatErr(cs, "(X) Invalid item.");

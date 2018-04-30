@@ -1,12 +1,9 @@
 package com.rota.ee3help.commands;
 
-import java.util.Map;
-
 import com.pahimar.ee3.api.exchange.EnergyValue;
-import com.pahimar.ee3.exchange.EnergyValueRegistry;
 import com.pahimar.ee3.exchange.WrappedStack;
-import com.pahimar.ee3.network.PacketHandler;
-import com.pahimar.ee3.network.message.MessageSetEnergyValue;
+import com.pahimar.ee3.exchange.EnergyValueRegistry;
+
 import com.rota.ee3help.EE3Help;
 import com.rota.ee3help.Helper;
 
@@ -19,10 +16,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.RegistryNamespaced;
 
+import com.pahimar.ee3.api.exchange.EnergyValueRegistryProxy;
+
 public class CommandAddItem extends CommandModifyBase
 {
-	EnergyValueRegistry registryValues = EnergyValueRegistry.getInstance();
+	EnergyValueRegistry registryValues = EnergyValueRegistry.INSTANCE;
 	RegistryNamespaced registryNames = GameData.getItemRegistry();
+	
+	public CommandAddItem()
+	{
+		name = "AddItem";
+		usage.add("AddItem <emcvalue>, Uses held item.");
+		usage.add("AddItem <itemID/name> <emcvalue> (DMG=0|N/A)");
+		usage.add("AddItem <itemID/name> <damagevalue> <emcvalue>");
+	}
 	
 	private void addItem(String name, int damageValue, float value)
 	{
@@ -30,8 +37,7 @@ public class CommandAddItem extends CommandModifyBase
 			return;
 		
 		ItemStack iStack = new ItemStack((Item) registryNames.getObject(name));
-        Map<WrappedStack, EnergyValue> valuesPre = Helper.loadPre();
-        
+
 		iStack.setItemDamage(damageValue);
 		
 		WrappedStack w = WrappedStack.wrap(iStack);
@@ -39,51 +45,28 @@ public class CommandAddItem extends CommandModifyBase
 		
         if (w != null && e != null && Float.compare(e.getValue(), 0) > 0)
         {
-        	if(valuesPre.containsKey(w))
-        		valuesPre.replace(w, e);
-        	else
-                valuesPre.put(w, e);
-        	
-        	PacketHandler.INSTANCE.sendToAll(new MessageSetEnergyValue(w, e));
+        	EnergyValueRegistryProxy.setEnergyValue(w, e, EnergyValueRegistryProxy.Phase.PRE_CALCULATION);
+    		EnergyValueRegistry.INSTANCE.save();
+            if(EE3Help.config.auto_oredict)
+            {
+            	CommandAddOreRange.addOreRange(name, damageValue, value);
+            }
         }
-
-        EnergyValueRegistry.getInstance().setShouldRegenNextRestart(true);
-        Helper.savePre(valuesPre);
-        
-        if(EE3Help.config.auto_oredict)
-        {
-        	CommandAddOreRange.addOreRange(name, damageValue, value);
-        }
-	}
-	
-	@Override
-	public String getCommandName()
-	{
-		return "add-item";
-	}
-
-	@Override
-	public String getCommandUsage(ICommandSender cs)
-	{
-		return "Use command with no arguments.";
 	}
 
 	@Override
 	public void processCommand(ICommandSender cs, String[] args)
 	{
-		resetFlag();
 		try
 		{
 			String name;
-			int start, end;
+			
 			float value;
 			
 			switch(args.length)
 			{
 				case 0:
-					Helper.toChatErr(cs, "add-item <emcvalue>, Uses held item.");
-					Helper.toChatErr(cs, "add-item <itemID/name> <emcvalue> (DMG=0|N/A)");
-					Helper.toChatErr(cs, "add-item <itemID/name> <damagevalue> <emcvalue>");
+					Helper.toChatErr(cs,getUsageString());
 					break;
 				case 1:
 					if(cs instanceof EntityPlayer)
@@ -116,7 +99,7 @@ public class CommandAddItem extends CommandModifyBase
 					break;
 				case 3:
 					name = Helper.getItemName(args[0]);
-					start = end = Integer.parseInt(args[1]);
+
 					value = Float.parseFloat(args[2]);
 					
 					if(name != null)
@@ -129,9 +112,7 @@ public class CommandAddItem extends CommandModifyBase
 					break;
 				default:
 					Helper.toChatErr(cs, "Invalid number of arguments for operation.");
-					Helper.toChatErr(cs, "add-item <emcvalue>, Uses held item.");
-					Helper.toChatErr(cs, "add-item <itemID/name> <emcvalue> (DMG=0|N/A)");
-					Helper.toChatErr(cs, "add-item <itemID/name> <damagevalue> <emcvalue>");
+					Helper.toChatErr(cs,getUsageString());
 			}
 		}
 		catch (NumberFormatException e)

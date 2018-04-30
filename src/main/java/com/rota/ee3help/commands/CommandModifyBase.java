@@ -1,17 +1,23 @@
 package com.rota.ee3help.commands;
 
-import com.rota.ee3help.EE3Help;
+import java.util.ArrayList;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 
 public class CommandModifyBase extends CommandBase
 {
-	public void resetFlag()
+	protected ArrayList<String> usage = new ArrayList<String>();
+	protected String name = "";
+	public CommandModifyBase()
 	{
-		EE3Help.listAccurate = false;
+		name = "CommandModifyBase";
 	}
-	
+	public String getUsageString()
+	{
+		return String.join("\n", usage);
+	}
+
 	@Override
 	public int getRequiredPermissionLevel()
 	{
@@ -21,13 +27,13 @@ public class CommandModifyBase extends CommandBase
 	@Override
 	public String getCommandName()
 	{
-		return "CMD-MODIFY";
+		return name;
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender cs)
 	{
-		return "You dont.";
+		return getUsageString();
 	}
 
 	@Override

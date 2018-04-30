@@ -17,19 +17,22 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "2.2a"
+version = "2.3"
 group= "com.rota.ee3help" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "EE3Help"
+archivesBaseName = "EE3Helper"
 
-minecraft 
-{
-    version = "1.7.10-10.13.4.1456-1.7.10"
+apply plugin: 'java'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "eclipse"
 }
 
 dependencies 
 {
-	compile files('lib/EquivalentExchange3-1.7.10-0.3.0-dev.jar')
+	compile files('lib/EquivalentExchange3-1.7.10-0.3.0.0-dev.jar')
 }
 
 processResources

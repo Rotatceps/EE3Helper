@@ -15,7 +15,6 @@ public class EE3Help
 	public static final String MOD_ID = "EE3HELP";
 	public static final String VERSION = "2.3";
 	
-	public static boolean listAccurate = false;
 	public static Configuration config;
 	
 	@EventHandler

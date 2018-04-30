@@ -8,12 +8,19 @@ import com.rota.ee3help.Helper;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
 
 public class CommandEE3H extends CommandBase
 {
 	private static ArrayList<CommandBase> subCommands = new ArrayList<CommandBase>();
 	private static List<String> commands = new ArrayList<String>();
+	
+	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender cs)
+	{
+		return true;
+	}
 	
 	@Override
 	public String getCommandName()
@@ -30,40 +37,57 @@ public class CommandEE3H extends CommandBase
 	@Override
 	public void processCommand(ICommandSender cs, String[] args)
 	{
-		// copyOfRange is exclusive for the second parameter.
+		boolean singlePlayer = MinecraftServer.getServer().isSinglePlayer();
 		
         if (args.length >= 1)
         {
             for (CommandBase command : subCommands)
             {
-                if (command.getCommandName().equalsIgnoreCase(args[0]) && command.canCommandSenderUseCommand(cs))
+                if (command.getCommandName().equalsIgnoreCase(args[0]))
                 {
-                	if(args.length > 1)
+                	if(singlePlayer || command.canCommandSenderUseCommand(cs))
                 	{
-                        command.processCommand(cs, Arrays.copyOfRange(args, 1, args.length));
-                        return;
+                		if(args.length > 1)
+                    	{
+                            command.processCommand(cs, Arrays.copyOfRange(args, 1, args.length));
+                            return;
+                    	}
+                    	else
+                    	{
+                    		command.processCommand(cs, new String [] {});
+                    		return;
+                    	}		
                 	}
                 	else
                 	{
-                		command.processCommand(cs, new String [] {});
+                		Helper.toChatErr(cs, "You do not have permission to use this sub-command.");
                 		return;
                 	}
                 }
             }
         }
+        
         Helper.toChatErr(cs, "Invalid, or no sub-command provided.");
         Helper.toChat(cs, EnumChatFormatting.GOLD + "Execute a sub-command with no arguments for instructions");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "add-item: "+EnumChatFormatting.BLUE+"Adds a single item.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "add-item-range: "+EnumChatFormatting.BLUE+"Adds a range of items by their damage value.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "add-ore: "+EnumChatFormatting.BLUE+"Adds the given ore name if it exists.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "add-ore-range: "+EnumChatFormatting.BLUE+"Adds all the ore names of the given item.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "remove: "+EnumChatFormatting.BLUE+"Removes the specified entry from the list.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "regen: "+EnumChatFormatting.BLUE+"Forces EE3 to run Dynamic EMC.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "list: "+EnumChatFormatting.BLUE+"List all entries in the values file. by page.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "iditem: "+EnumChatFormatting.BLUE+"Outputs all relevant information about the given item.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "data: "+EnumChatFormatting.BLUE+"Import/Export/List available data, use command for more info.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "add-fluid: "+EnumChatFormatting.BLUE+"Adds the given fluid name if it exists.");
-        Helper.toChat(cs, EnumChatFormatting.AQUA + "sync: "+EnumChatFormatting.BLUE+"Forces a sync for oneself or all players (op command).");
+        Helper.toChat(cs, EnumChatFormatting.GOLD + "Commands are not case-sensitive");
+        
+        // Op only.
+        if(singlePlayer || cs.canCommandSenderUseCommand(2, ""))
+        {
+            Helper.toChat(cs, EnumChatFormatting.AQUA + "Regen: "		+EnumChatFormatting.BLUE+"Forces EE3 to recalculate EMC values.");
+            Helper.toChat(cs, EnumChatFormatting.AQUA + "AddItem: "		+EnumChatFormatting.BLUE+"Adds a single item.");
+            Helper.toChat(cs, EnumChatFormatting.AQUA + "AddItemRange: "+EnumChatFormatting.BLUE+"Adds a range of items by their damage value.");
+            Helper.toChat(cs, EnumChatFormatting.AQUA + "AddOre: "		+EnumChatFormatting.BLUE+"Adds the given ore name if it exists.");
+            Helper.toChat(cs, EnumChatFormatting.AQUA + "AddOreRange: "	+EnumChatFormatting.BLUE+"Adds all the ore names of the given item.");
+            Helper.toChat(cs, EnumChatFormatting.AQUA + "AddFluid: "	+EnumChatFormatting.BLUE+"Adds the given fluid name if it exists.");        	
+        }
+
+        Helper.toChat(cs, EnumChatFormatting.AQUA + "IdItem: "		+EnumChatFormatting.BLUE+"Outputs all relevant information about the given item.");
+        
+        //Helper.toChat(cs, EnumChatFormatting.AQUA + "remove: "	+EnumChatFormatting.BLUE+"Removes the specified entry from the list.");
+        //Helper.toChat(cs, EnumChatFormatting.AQUA + "list: "		+EnumChatFormatting.BLUE+"List all entries in the values file. by page.");
+        //Helper.toChat(cs, EnumChatFormatting.AQUA + "data: "		+EnumChatFormatting.BLUE+"Import/Export/List available data, use command for more info.");
+        //Helper.toChat(cs, EnumChatFormatting.AQUA + "sync: "		+EnumChatFormatting.BLUE+"Forces a sync for oneself or all players (op command).");
 	}
 	
 	@Override
@@ -88,19 +112,19 @@ public class CommandEE3H extends CommandBase
 
 	    static
 	    {
+	    	subCommands.add(new CommandForceRegen());
+	    	
 	    	subCommands.add(new CommandAddItem());
 	    	subCommands.add(new CommandAddItemRange());
 	    	subCommands.add(new CommandAddOre());
 	    	subCommands.add(new CommandAddOreRange());
-	    	
-	    	subCommands.add(new CommandRemove());
-	    	
-	    	subCommands.add(new CommandList());
-	    	subCommands.add(new CommandForceRegen());
-	    	subCommands.add(new CommandIDItem());
-	    	subCommands.add(new CommandData());
 	    	subCommands.add(new CommandAddFluid());
-	    	subCommands.add(new CommandSync());
+	    	subCommands.add(new CommandIDItem());
+	    	
+	    	//subCommands.add(new CommandRemove());	    	
+	    	//subCommands.add(new CommandList());
+	    	//subCommands.add(new CommandData());
+	    	//subCommands.add(new CommandSync());
 
 	        for (CommandBase commandBase : subCommands)
 	        {

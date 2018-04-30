@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-
 import cpw.mods.fml.common.FMLLog;
 
 public class Configuration
@@ -19,10 +18,9 @@ public class Configuration
 	File config = new File(CONFIG_DIR + File.separator + CONFIG_NAME);
 	
 	public static final String DESCRIPTION_AUTO_OREDICT = "Automatically add all Ore Dictionary entries for added items.";
-	public static final String DESCRIPTION_ALLOW_NONOPSYNC = "Allow non-op players to request a sync.";
+	//public static final String DESCRIPTION_ALLOW_NONOPSYNC = "Allow non-op players to request a sync.";
 	public boolean auto_oredict;
-	public boolean allow_nonopsync;
-	
+	//public boolean allow_nonopsync;
 	
 	public Configuration()
 	{
@@ -41,7 +39,7 @@ public class Configuration
 	public void setDefault()
 	{
 		auto_oredict = true;
-		allow_nonopsync = true;
+		//allow_nonopsync = true;
 	}
 	
 	public void writeConfig()
@@ -56,8 +54,8 @@ public class Configuration
 			pw.println("# " + DESCRIPTION_AUTO_OREDICT);
 			pw.print("auto_oredict = " + auto_oredict + "\n");
 			
-			pw.println("# " + DESCRIPTION_ALLOW_NONOPSYNC);
-			pw.print("auto_oredict = " + allow_nonopsync + "\n");
+			//pw.println("# " + DESCRIPTION_ALLOW_NONOPSYNC);
+			//pw.print("auto_oredict = " + allow_nonopsync + "\n");
 			
 			pw.close();
 		}
@@ -114,8 +112,16 @@ public class Configuration
 					FMLLog.getLogger().error("Non-boolean value for boolean configuration");
 					setDefault();
 				}
-				catch (SecurityException e){FMLLog.getLogger().error(e.getMessage()); setDefault();}
-				catch (IllegalAccessException e){FMLLog.getLogger().error(e.getMessage()); setDefault();}
+				catch (SecurityException e)
+				{
+					FMLLog.getLogger().error(e.getMessage()); 
+					setDefault();
+				}
+				catch (IllegalAccessException e)
+				{
+					FMLLog.getLogger().error(e.getMessage()); 
+					setDefault();
+					}
 			}
 			br.close();
 		}

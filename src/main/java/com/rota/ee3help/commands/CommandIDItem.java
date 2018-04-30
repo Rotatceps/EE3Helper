@@ -20,15 +20,24 @@ public class CommandIDItem extends CommandBase
 	// ORE DICTIONARY NAMES
 	
 	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender cs)
+	{
+		return true;
+	}
+	
+	@Override
 	public String getCommandName()
 	{
-		return "iditem";
+		return "IdItem";
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender cs) 
 	{
-		return "iditem, iditem <name/id>, iditem <name/id> <dmg>";
+		return
+			"IdItem (while holding an item)\n" +
+			"IdItem <name/id>\n" +
+			"IdItem <name/id> <dmg>";
 	}
 
 	@Override
@@ -57,6 +66,7 @@ public class CommandIDItem extends CommandBase
 				if(i == null)
 				{
 					Helper.toChatErr(cs, "No held item, or no such item.");
+					Helper.toChatErr(cs, getCommandUsage(cs));
 					return;
 				}
 
@@ -95,6 +105,7 @@ public class CommandIDItem extends CommandBase
 			catch(NumberFormatException e)
 			{
 				Helper.toChatErr(cs, "Non-number in numeric field.");
+				Helper.toChatErr(cs, getCommandUsage(cs));
 			}
 		}
 	}
